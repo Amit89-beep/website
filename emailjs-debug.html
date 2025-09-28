@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmailJS Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-info { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        button { padding: 10px 20px; margin: 10px 0; background: #2196f3; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #1976d2; }
+    </style>
+</head>
+<body>
+    <h1>EmailJS Configuration Debug</h1>
+    
+    <div id="debug-info" class="debug-info">
+        <h3>Configuration Status:</h3>
+        <p id="config-status">Loading...</p>
+    </div>
+    
+    <div id="test-results" class="debug-info">
+        <h3>Test Results:</h3>
+        <p id="test-status">Ready to test</p>
+    </div>
+    
+    <button onclick="testConfiguration()">Test Configuration</button>
+    <button onclick="testEmailSending()">Test Email Sending</button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="emailjs-config-loader.js"></script>
+    <script src="config.js"></script>
+    
+    <script>
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `debug-info ${type}`;
+        }
+        
+        function testConfiguration() {
+            console.log('Testing EmailJS configuration...');
+            
+            // Check if config loader is working
+            if (window.emailJSConfig) {
+                console.log('Configuration loader found');
+                console.log('Public Key:', window.emailJSConfig.getPublicKey());
+                console.log('Service ID:', window.emailJSConfig.getServiceId());
+                console.log('Appointment Template:', window.emailJSConfig.getTemplateId('APPOINTMENT'));
+                console.log('Contact Template:', window.emailJSConfig.getTemplateId('CONTACT'));
+                
+                updateStatus('config-status', 'Configuration loaded successfully!', 'success');
+            } else {
+                console.error('Configuration loader not found');
+                updateStatus('config-status', 'Configuration loader not found!', 'error');
+            }
+            
+            // Check if EmailJS is initialized
+            if (window.emailjsConfigured) {
+                console.log('EmailJS is configured');
+                updateStatus('test-status', 'EmailJS is properly configured', 'success');
+            } else {
+                console.error('EmailJS is not configured');
+                updateStatus('test-status', 'EmailJS is not configured', 'error');
+            }
+        }
+        
+        function testEmailSending() {
+            console.log('Testing email sending...');
+            
+            const testParams = {
+                to_name: 'Dr. Ajay Chamoli',
+                from_name: 'Test User',
+                from_email: 'test@example.com',
+                phone: '1234567890',
+                subject: 'Test Email',
+                message: 'This is a test email from the debug page.'
+            };
+            
+            const serviceId = window.emailJSConfig ? window.emailJSConfig.getServiceId() : 'service_us5cu6t';
+            const templateId = window.emailJSConfig ? window.emailJSConfig.getTemplateId('CONTACT') : 'template_fi18lis';
+            
+            console.log('Sending test email with:', { serviceId, templateId, testParams });
+            
+            emailjs.send(serviceId, templateId, testParams)
+                .then(function(response) {
+                    console.log('Email sent successfully:', response);
+                    updateStatus('test-status', 'Test email sent successfully! Status: ' + response.status, 'success');
+                })
+                .catch(function(error) {
+                    console.error('Email sending failed:', error);
+                    updateStatus('test-status', 'Email sending failed: ' + error.text, 'error');
+                });
+        }
+        
+        // Auto-test configuration on page load
+        window.addEventListener('load', function() {
+            setTimeout(testConfiguration, 1000);
+        });
+    </script>
+</body>
+</html>

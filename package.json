@@ -1,0 +1,27 @@
+{
+  "name": "nagraja-homeopathy-website",
+  "version": "1.0.0",
+  "description": "Nagraja Homeopathy - Best Homeopathy Clinic in Rishikesh",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx live-server --port=3000",
+    "build": "echo 'Build complete'"
+  },
+  "keywords": [
+    "homeopathy",
+    "clinic",
+    "doctor",
+    "medical",
+    "natural",
+    "health",
+    "treatment",
+    "rishikesh",
+    "uttarakhand",
+    "dr-ajay-chamoli"
+  ],
+  "author": "Nagraja Homeopathy",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.0"
+  }
+}
